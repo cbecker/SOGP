@@ -31,6 +31,7 @@ set(ALL_SOURCE_FILES ${SOGP_SOURCE_FILES} ${NEWMAT_SOURCE_FILES})
 ADD_LIBRARY( SOGP STATIC ${ALL_SOURCE_FILES} )
 
 INSTALL_TARGETS(/lib SOGP)
+INSTALL(FILES ${CMAKE_SOURCE_DIR}/lib/SOGP.h ${CMAKE_SOURCE_DIR}/lib/SOGP_aux.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 
 #  only if cjbTest is to be built
 #include_directories(/data/phd/bitbucket/sqb/include)
