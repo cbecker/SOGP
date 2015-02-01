@@ -20,13 +20,19 @@ SOGP::SOGP(SOGPParams params){
 };
 
 //Add a chunk of data
-void SOGP::addM(const Matrix& in,const Matrix& out){
+void SOGP::addM(const Matrix& in,const Matrix& out, const ColumnVector& measNoise)
+{
   for(int i=1;i<=in.Ncols();i++)
-    add(in.Column(i),out.Column(i));
+  {
+    printf("Cols: %d\n", in.Ncols());
+    fflush(stdout);
+    add(in.Column(i),out.Column(i), measNoise(i));
+  }
 }
 
 //Add this input and output to the GP
-void SOGP::add(const ColumnVector& in,const ColumnVector& out){
+void SOGP::add(const ColumnVector& in,const ColumnVector& out, const double measNoise)
+{
 	total_count++;
 	if(DEBUG)
 		printf("\t\tSOGP adding %dth point to SOGP %d (current_size = %d):",total_count,m_id,current_size);
@@ -36,8 +42,8 @@ void SOGP::add(const ColumnVector& in,const ColumnVector& out){
     C.ReSize(1,1);
     Q.ReSize(1,1);
     //Equations 2.46 with q, r, and s collapsed
-    alpha=out.t()/(kstar+m_params.s20);
-    C(1,1)=-1/(kstar+m_params.s20);
+    alpha=out.t()/(kstar + measNoise);
+    C(1,1)=-1/(kstar + measNoise);
     Q(1,1)=1/kstar;
     
     current_size=1;
@@ -60,7 +66,7 @@ void SOGP::add(const ColumnVector& in,const ColumnVector& out){
     
     //Update scalars
     //page 33 - Assumes Gaussian noise
-    double r = -1/(m_params.s20+s2);
+    double r = -1/(measNoise + s2);
     //printf("out %d m %d r %f\n",out.Nrows(),m.Ncols(),r);
     RowVector q = -r*(out.t()-m);
 
@@ -282,7 +288,10 @@ ReturnMatrix SOGP::predict(const ColumnVector& in, double &sigma,bool conf){
   //Switch to a confidence (0-100)
   if(conf){
     //Normalize to one
-    sigma /= kstar+m_params.s20;
+    // cjbecker: removed noise sigma from here, as we want to predict p(f|x1,f1,x2)
+    sigma /= kstar;
+    //sigma /= kstar+m_params.s20;
+
     //switch diretion
     sigma = 1-sigma;
     //and times 100;
@@ -299,7 +308,9 @@ ReturnMatrix SOGP::predict(const ColumnVector& in, double &sigma,bool conf){
 //Log probability of this data
 //Sigma should really be a matrix...
 //Should this use Q or -C?  Should prediction use which?
-double SOGP::log_prob(const ColumnVector& in, const ColumnVector& out){
+double SOGP::log_prob(const ColumnVector& in, const ColumnVector& out)
+{
+#if 0 // commented out bcos we don't have the same noise sigma for all points, so it needs re-doing
 	int dout = out.Nrows();
 	static const double logsqrt2pi = .5*log(2*M_PI);
   double sigma;
@@ -330,6 +341,9 @@ double SOGP::log_prob(const ColumnVector& in, const ColumnVector& out){
 	//if(C.Nrows()==1)
 	//printf("\t\tC has one entry: %lf, k = %lf\n",C(1,1),k(1));
 	return lp;
+#else
+  return 0;
+#endif
 }
 
 	/*

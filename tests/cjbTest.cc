@@ -40,6 +40,7 @@ int main(int argc, char **argv)
 
   //The data
   RowVector inputs(N), outputs(N), testin(N),testout(N);
+  ColumnVector inputMeasNoise(N);
 
   // Eigen data
   GP::VectorType  eigInputs(N), eigOutputs(N);
@@ -47,7 +48,6 @@ int main(int argc, char **argv)
   GP otherGP;
 
   SOGPParams params;
-  params.s20 = 0.5;
   params.capacity = 100;
 
   dynamic_cast<RBFKernel *>(params.m_kernel)->init( sqrt(10.0) );
@@ -69,12 +69,14 @@ int main(int argc, char **argv)
     testin(n) = -1 + rand()/(RAND_MAX/2.0);
     testout(n) = cos(5*testin(n));
     fprintf(file,"%lf %lf\n",inputs(n),outputs(n));
+
+    inputMeasNoise(n) = 0.1 + rand() * 9.9 / RAND_MAX;
   }
   fclose(file);
 
   printf("Other GP\n");
   for(int n=1;n<=N;n++)
-    otherGP.updateKnownVariance( inputs(n), outputs(n), params.s20, 0 );
+    otherGP.updateKnownVariance( inputs(n), outputs(n), inputMeasNoise(n), 0 );
  
   //Test Regression
   printf("Regression test (default settings)\n");
@@ -82,7 +84,14 @@ int main(int argc, char **argv)
 
   m_SOGP->setParams(params);
 
-  m_SOGP->addM(inputs,outputs);
+  for(int n=1;n<=N;n++)
+  {
+    RowVector vIn(1), vOut(1);
+    vIn(1) = inputs(n);
+    vOut(1) = outputs(n);
+    m_SOGP->add(vIn, vOut, inputMeasNoise(n));
+  }
+  //
   file=fopen("regress.txt","w");
 
   ColumnVector sigma;

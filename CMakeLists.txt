@@ -50,8 +50,6 @@ INSTALL(FILES ${CMAKE_SOURCE_DIR}/newmat/boolean.h
 #include_directories(/data/phd/bitbucket/sqb/include)
 
 ## add tests
-add_executable( SOGPTest "${SOGP_SOURCE_DIR}/tests/SOGPtest.cc" )
 #add_executable( cjbTest "${SOGP_SOURCE_DIR}/tests/cjbTest.cc" )
 
-TARGET_LINK_LIBRARIES( SOGPTest SOGP )
 #TARGET_LINK_LIBRARIES( cjbTest SOGP )

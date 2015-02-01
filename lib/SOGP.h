@@ -38,7 +38,7 @@ class SOGP{
   };
 
   //Add data to the SOGP
-  void add(const ColumnVector& in,const ColumnVector& out);
+  void add(const ColumnVector& in,const ColumnVector& out, const double measNoise);
   //Predict output and sigma or confidence (0-100)
   ReturnMatrix predict(const ColumnVector& in,double &sigconf,bool conf=false);
   //Don't care about sigma
@@ -48,7 +48,7 @@ class SOGP{
   }
 
   //These two just wrap the single-data versions
-  void addM(const Matrix& in, const Matrix& out);
+  void addM(const Matrix& in, const Matrix& out, const ColumnVector& measNoise);
   ReturnMatrix predictM(const Matrix& in, ColumnVector &sigconf,bool conf=false);
   ReturnMatrix predictM(const Matrix& in){
     ColumnVector foo;
