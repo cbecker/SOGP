@@ -7,7 +7,7 @@ if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-set(CMAKE_CXX_FLAGS_RELEASE "-msse2 -msse3 -mssse3 -O3 -fPIC")
+set(CMAKE_CXX_FLAGS_RELEASE "-msse2 -msse3 -mssse3 -O3 -fPIC -Wno-unused-result")
 set(CMAKE_LINKER_FLAGS_RELEASE "-fPIC")
 
 set(NEWMAT_SOURCE_DIR)
@@ -32,8 +32,21 @@ ADD_LIBRARY( SOGP STATIC ${ALL_SOURCE_FILES} )
 
 INSTALL_TARGETS(/lib SOGP)
 INSTALL(FILES ${CMAKE_SOURCE_DIR}/lib/SOGP.h ${CMAKE_SOURCE_DIR}/lib/SOGP_aux.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
+INSTALL(FILES ${CMAKE_SOURCE_DIR}/newmat/boolean.h 
+			 ${CMAKE_SOURCE_DIR}/newmat/controlw.h 
+			 ${CMAKE_SOURCE_DIR}/newmat/include.h 
+			 ${CMAKE_SOURCE_DIR}/newmat/myexcept.h 
+			 ${CMAKE_SOURCE_DIR}/newmat/newmatap.h 
+			 ${CMAKE_SOURCE_DIR}/newmat/newmat.h 
+			 ${CMAKE_SOURCE_DIR}/newmat/newmatio.h 
+			 ${CMAKE_SOURCE_DIR}/newmat/newmatnl.h 
+			 ${CMAKE_SOURCE_DIR}/newmat/newmatrc.h 
+			 ${CMAKE_SOURCE_DIR}/newmat/newmatrm.h 
+			 ${CMAKE_SOURCE_DIR}/newmat/precisio.h 
+			 ${CMAKE_SOURCE_DIR}/newmat/solution.h
+		 DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 
-#  only if cjbTest is to be built
+# only if cjbTest is to be built
 #include_directories(/data/phd/bitbucket/sqb/include)
 
 ## add tests
