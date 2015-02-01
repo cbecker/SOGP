@@ -1,0 +1,3 @@
+This project wraps the Online Sparse Gaussian Process C++ code (SOGP) by Dan Grollman.
+
+It includes the newmat library as well, which is linked statically.
