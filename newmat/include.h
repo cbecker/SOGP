@@ -11,6 +11,8 @@
 
 //#define SETUP_C_SUBSCRIPTS              // allow element access via A[i][j]
 
+#define NEWMAT_ELEM_ACCESS_NORANGECHECK  // if ranges shouldn't be checked for element-wise access
+
 //#define OPT_COMPATIBLE                  // for use with opt++
 
 // Activate just one of the following 3 statements

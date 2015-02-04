@@ -30,16 +30,22 @@ static int tristore(int n)                      // els in triangular matrix
 Real& Matrix::operator()(int m, int n)
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || m>nrows || n<=0 || n>ncols)
       Throw(IndexException(m,n,*this));
+#endif
+
    return store[(m-1)*ncols+n-1];
 }
 
 Real& SymmetricMatrix::operator()(int m, int n)
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || n<=0 || m>nrows || n>ncols)
       Throw(IndexException(m,n,*this));
+#endif
+
    if (m>=n) return store[tristore(m-1)+n-1];
    else return store[tristore(n-1)+m-1];
 }
@@ -47,45 +53,64 @@ Real& SymmetricMatrix::operator()(int m, int n)
 Real& UpperTriangularMatrix::operator()(int m, int n)
 {
    REPORT
+
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || n<m || n>ncols)
       Throw(IndexException(m,n,*this));
+#endif
+
    return store[(m-1)*ncols+n-1-tristore(m-1)];
 }
 
 Real& LowerTriangularMatrix::operator()(int m, int n)
 {
    REPORT
+
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (n<=0 || m<n || m>nrows)
       Throw(IndexException(m,n,*this));
+#endif
+
    return store[tristore(m-1)+n-1];
 }
 
 Real& DiagonalMatrix::operator()(int m, int n)
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (n<=0 || m!=n || m>nrows || n>ncols)
       Throw(IndexException(m,n,*this));
+#endif
    return store[n-1];
 }
 
 Real& DiagonalMatrix::operator()(int m)
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || m>nrows) Throw(IndexException(m,*this));
+#endif
+
    return store[m-1];
 }
 
 Real& ColumnVector::operator()(int m)
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || m> nrows) Throw(IndexException(m,*this));
+#endif
+
    return store[m-1];
 }
 
 Real& RowVector::operator()(int n)
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (n<=0 || n> ncols) Throw(IndexException(n,*this));
+   #endif
+
    return store[n-1];
 }
 
@@ -93,8 +118,11 @@ Real& BandMatrix::operator()(int m, int n)
 {
    REPORT
    int w = upper+lower+1; int i = lower+n-m;
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || m>nrows || n<=0 || n>ncols || i<0 || i>=w)
       Throw(IndexException(m,n,*this));
+#endif
+
    return store[w*(m-1)+i];
 }
 
@@ -102,8 +130,12 @@ Real& UpperBandMatrix::operator()(int m, int n)
 {
    REPORT
    int w = upper+1; int i = n-m;
+
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || m>nrows || n<=0 || n>ncols || i<0 || i>=w)
       Throw(IndexException(m,n,*this));
+#endif
+
    return store[w*(m-1)+i];
 }
 
@@ -111,8 +143,12 @@ Real& LowerBandMatrix::operator()(int m, int n)
 {
    REPORT
    int w = lower+1; int i = lower+n-m;
+   
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || m>nrows || n<=0 || n>ncols || i<0 || i>=w)
       Throw(IndexException(m,n,*this));
+#endif
+
    return store[w*(m-1)+i];
 }
 
@@ -124,16 +160,20 @@ Real& SymmetricBandMatrix::operator()(int m, int n)
    {
       REPORT
       int i = lower+n-m;
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
       if ( m>nrows || n<=0 || i<0 )
          Throw(IndexException(m,n,*this));
+#endif
       return store[w*(m-1)+i];
    }
    else
    {
       REPORT
       int i = lower+m-n;
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
       if ( n>nrows || m<=0 || i<0 )
          Throw(IndexException(m,n,*this));
+#endif
       return store[w*(n-1)+i];
    }
 }
@@ -142,16 +182,21 @@ Real& SymmetricBandMatrix::operator()(int m, int n)
 Real Matrix::operator()(int m, int n) const
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || m>nrows || n<=0 || n>ncols)
       Throw(IndexException(m,n,*this));
+#endif
    return store[(m-1)*ncols+n-1];
 }
 
 Real SymmetricMatrix::operator()(int m, int n) const
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || n<=0 || m>nrows || n>ncols)
       Throw(IndexException(m,n,*this));
+#endif
+
    if (m>=n) return store[tristore(m-1)+n-1];
    else return store[tristore(n-1)+m-1];
 }
@@ -159,45 +204,57 @@ Real SymmetricMatrix::operator()(int m, int n) const
 Real UpperTriangularMatrix::operator()(int m, int n) const
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || n<m || n>ncols)
       Throw(IndexException(m,n,*this));
+#endif
    return store[(m-1)*ncols+n-1-tristore(m-1)];
 }
 
 Real LowerTriangularMatrix::operator()(int m, int n) const
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (n<=0 || m<n || m>nrows)
       Throw(IndexException(m,n,*this));
+#endif
    return store[tristore(m-1)+n-1];
 }
 
 Real DiagonalMatrix::operator()(int m, int n) const
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (n<=0 || m!=n || m>nrows || n>ncols)
       Throw(IndexException(m,n,*this));
+#endif
    return store[n-1];
 }
 
 Real DiagonalMatrix::operator()(int m) const
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || m>nrows) Throw(IndexException(m,*this));
+#endif
    return store[m-1];
 }
 
 Real ColumnVector::operator()(int m) const
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || m> nrows) Throw(IndexException(m,*this));
+#endif
    return store[m-1];
 }
 
 Real RowVector::operator()(int n) const
 {
    REPORT
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (n<=0 || n> ncols) Throw(IndexException(n,*this));
+#endif
    return store[n-1];
 }
 
@@ -205,8 +262,11 @@ Real BandMatrix::operator()(int m, int n) const
 {
    REPORT
    int w = upper+lower+1; int i = lower+n-m;
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || m>nrows || n<=0 || n>ncols || i<0 || i>=w)
       Throw(IndexException(m,n,*this));
+#endif
+
    return store[w*(m-1)+i];
 }
 
@@ -214,8 +274,10 @@ Real UpperBandMatrix::operator()(int m, int n) const
 {
    REPORT
    int w = upper+1; int i = n-m;
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || m>nrows || n<=0 || n>ncols || i<0 || i>=w)
       Throw(IndexException(m,n,*this));
+#endif
    return store[w*(m-1)+i];
 }
 
@@ -223,8 +285,10 @@ Real LowerBandMatrix::operator()(int m, int n) const
 {
    REPORT
    int w = lower+1; int i = lower+n-m;
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
    if (m<=0 || m>nrows || n<=0 || n>ncols || i<0 || i>=w)
       Throw(IndexException(m,n,*this));
+#endif
    return store[w*(m-1)+i];
 }
 
@@ -236,16 +300,20 @@ Real SymmetricBandMatrix::operator()(int m, int n) const
    {
       REPORT
       int i = lower+n-m;
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
       if ( m>nrows || n<=0 || i<0 )
          Throw(IndexException(m,n,*this));
+#endif
       return store[w*(m-1)+i];
    }
    else
    {
       REPORT
       int i = lower+m-n;
+#ifndef NEWMAT_ELEM_ACCESS_NORANGECHECK
       if ( n>nrows || m<=0 || i<0 )
          Throw(IndexException(m,n,*this));
+#endif
       return store[w*(n-1)+i];
    }
 }
@@ -616,7 +684,7 @@ void GeneralMatrix::operator+=(const BaseMatrix& X)
    Tracer tr("GeneralMatrix::operator+=");
    // MatrixConversionCheck mcc;
    Protect();                                   // so it cannot get deleted
-						// during Evaluate
+                  // during Evaluate
    GeneralMatrix* gm = ((BaseMatrix&)X).Evaluate();
 #ifdef TEMPS_DESTROYED_QUICKLY
    AddedMatrix* am = new AddedMatrix(this,gm);
@@ -636,7 +704,7 @@ void GeneralMatrix::operator-=(const BaseMatrix& X)
    Tracer tr("GeneralMatrix::operator-=");
    // MatrixConversionCheck mcc;
    Protect();                                   // so it cannot get deleted
-						// during Evaluate
+                  // during Evaluate
    GeneralMatrix* gm = ((BaseMatrix&)X).Evaluate();
 #ifdef TEMPS_DESTROYED_QUICKLY
    SubtractedMatrix* am = new SubtractedMatrix(this,gm);
@@ -656,7 +724,7 @@ void GeneralMatrix::operator*=(const BaseMatrix& X)
    Tracer tr("GeneralMatrix::operator*=");
    // MatrixConversionCheck mcc;
    Protect();                                   // so it cannot get deleted
-						// during Evaluate
+                  // during Evaluate
    GeneralMatrix* gm = ((BaseMatrix&)X).Evaluate();
 #ifdef TEMPS_DESTROYED_QUICKLY
    MultipliedMatrix* am = new MultipliedMatrix(this,gm);
@@ -676,7 +744,7 @@ void GeneralMatrix::operator|=(const BaseMatrix& X)
    Tracer tr("GeneralMatrix::operator|=");
    // MatrixConversionCheck mcc;
    Protect();                                   // so it cannot get deleted
-						// during Evaluate
+                  // during Evaluate
    GeneralMatrix* gm = ((BaseMatrix&)X).Evaluate();
 #ifdef TEMPS_DESTROYED_QUICKLY
    ConcatenatedMatrix* am = new ConcatenatedMatrix(this,gm);
@@ -696,7 +764,7 @@ void GeneralMatrix::operator&=(const BaseMatrix& X)
    Tracer tr("GeneralMatrix::operator&=");
    // MatrixConversionCheck mcc;
    Protect();                                   // so it cannot get deleted
-						// during Evaluate
+                  // during Evaluate
    GeneralMatrix* gm = ((BaseMatrix&)X).Evaluate();
 #ifdef TEMPS_DESTROYED_QUICKLY
    StackedMatrix* am = new StackedMatrix(this,gm);

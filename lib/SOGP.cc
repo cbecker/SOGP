@@ -36,6 +36,7 @@ void SOGP::add(const ColumnVector& in,const ColumnVector& out, const double meas
 	total_count++;
 	if(DEBUG)
 		printf("\t\tSOGP adding %dth point to SOGP %d (current_size = %d):",total_count,m_id,current_size);
+  
   double kstar =m_params.m_kernel->kstar(in);
   
   if(current_size==0){//First point is easy
@@ -81,7 +82,7 @@ void SOGP::add(const ColumnVector& in,const ColumnVector& out, const double meas
       gamma=0;
     }
 
-    if(gamma<1e-6 && m_params.capacity!= -1){//Nearly singular, do a sparse update (e_tol)
+    if(gamma<1e-3 && m_params.capacity!= -1){//Nearly singular, do a sparse update (e_tol)
 			if(DEBUG)
 				printf("Sparse %lf \n",gamma);
       double eta = 1/(1+gamma*r);//Ibid
@@ -257,9 +258,22 @@ ReturnMatrix SOGP::predictM(const Matrix& in, ColumnVector &sigconf,bool conf){
 }
 
 //Predict the output and uncertainty for this input.
-ReturnMatrix SOGP::predict(const ColumnVector& in, double &sigma,bool conf){
+ReturnMatrix SOGP::predict(const ColumnVector& in, double &sigma,bool conf)
+{
+#if 0
   double kstar = m_params.m_kernel->kstar(in);
   ColumnVector k=m_params.m_kernel->kernelM(in,BV);
+#else
+  const unsigned nc = BV.Ncols();
+  const double kstar = 100;
+  const double xx = in(1);
+
+  ColumnVector k( nc );
+
+  for (unsigned i=1; i <= nc; i++)
+    k(i) = 100 * exp( -0.5 * ( BV(1,i) - xx ) * ( BV(1,i) - xx ) / (10.0) );
+
+#endif
 
   ColumnVector out;
   if(current_size==0)
@@ -281,7 +295,7 @@ ReturnMatrix SOGP::predict(const ColumnVector& in, double &sigma,bool conf){
   }
   
   if(sigma<0){//Numerical instability?
-    printf("SOGP:: sigma (%lf) < 0!\n",sigma);
+    printf("SOGP:: sigma (%lf) < 0 at x=%lf!\n",sigma, in(1));
     sigma=0;
   }
 
